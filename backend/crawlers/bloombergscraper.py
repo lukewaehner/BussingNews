@@ -16,20 +16,16 @@ for tag in subtags:
 
     soup = BeautifulSoup(html, 'html.parser')
 
-    # Assuming that 'data-component' is a common attribute for article elements
-    # and 'headline' is a sub-class or another attribute for titles
     articles = soup.find_all("title")
     print(articles)
 
     for article in articles:
-        # Find the 'a' element directly since it seems to contain the href and the text based on the screenshot
         link_element = article.find('a')
 
         if link_element and link_element.has_attr('href'):
             title = ''.join(link_element.get_text().split())
             href = link_element['href']
             
-            # Correcting the URL if it's a relative link
             if not href.startswith('http'):
                 href = f"https://www.bloomberg.com{href}"
             
