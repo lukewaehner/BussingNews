@@ -1,6 +1,5 @@
-// pages/index.tsx
 import React from "react";
-import News from "@/components/news"; // Import your component
+import News from "@/components/news";
 
 export default function Home() {
   return (
