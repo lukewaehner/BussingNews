@@ -23,4 +23,3 @@ insert_result = collection.insert_one(document)
 print(f"Document inserted with _id: {insert_result.inserted_id}")
 
 client.close()
-# Now you can use `db` to interact with your database
