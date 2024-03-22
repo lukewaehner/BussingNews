@@ -1,5 +1,6 @@
 const express = require("express");
 const NewsArticle = require("../models/newsarticleModel");
+
 const {
   createNews,
   getNews,
