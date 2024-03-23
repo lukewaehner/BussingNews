@@ -24,7 +24,8 @@ crawlerlist = [
     },
     {
         "function": crawlwsj,
-        "subtags": ['world', 'us', 'politics', 'economy', 'business', 'markets']
+        "subtags": ['world', 'us-news', 'politics', 'economy', 'business', 'tech', 'real-estate'],
+        "alttags": ['finance']
     }
 ]
 
@@ -33,13 +34,20 @@ def job():
     for crawler in crawlerlist:
         crawler_function = crawler["function"]
         subtags = crawler["subtags"]
-        articles = crawler_function(subtags)
+        if ("alttags" in crawler):
+            alttags = crawler["alttags"]
+            articles = crawler_function(subtags, alttags)
+        else:
+            articles = crawler_function(subtags)
+
+        # now process
+
         if articles:
             # Insert articles into the database
-            # insert_articles(articles)
+            insertarticles(articles)
             print(articles[0])  # For testing, print the first article
         else:
-            print("No articles fetched for this scraper.")
+            print(f'No articles fetched for this scraper, {crawler}.')
 
 
 job()

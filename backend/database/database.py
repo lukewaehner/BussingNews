@@ -1,19 +1,22 @@
-from pymongo import MongoClient
+from pymongo import MongoClient, UpdateOne
 from dotenv import load_dotenv
 import os
 
 
 def insertarticles(articles):
-    load_dotenv('../.env')
+    load_dotenv('.env')
     uri = os.getenv("MONGO_URI")
     client = MongoClient(uri)
     db = client["BussingNews"]
     collection = db["newsarticles"]
 
-    for article in articles:
-        # Using update_one with upsert=True to avoid duplication
-        collection.update_one({"url": article["url"]}, {
-                              "$set": article}, upsert=True)
-    print(f"Inserted/Updated {len(articles)} articles.")
+    # Prepare bulk update operations
+    operations = [
+        UpdateOne({"url": article["url"]}, {"$set": article}, upsert=True) for article in articles
+    ]
 
+    # Execute bulk operation
+    result = collection.bulk_write(operations)
+
+    print(f"Inserted/Updated {result.upserted_count} articles.")
     client.close()

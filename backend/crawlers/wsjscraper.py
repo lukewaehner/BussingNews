@@ -36,7 +36,7 @@ from bs4 import BeautifulSoup
 import requests
 
 
-def crawlwsj(subtags):
+def crawlwsj(subtags, alttags):
     articles_list = []  # List to hold the scraped data
 
     for tag in subtags:

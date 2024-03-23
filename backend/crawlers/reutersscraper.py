@@ -1,82 +1,56 @@
-# from selenium import webdriver
-# from selenium.webdriver.chrome.service import Service
-# from webdriver_manager.chrome import ChromeDriverManager
-# from selenium.webdriver.common.by import By
-# import json
-# import re
-
-# driver = webdriver.Chrome()
-
-# service = Service(ChromeDriverManager().install())
-# driver = webdriver.Chrome(service=service)
-
-# driver.get('https://www.reuters.com/')
-
-# with open('./cookies/reuters.json', 'rt') as cookies_file:
-#     cookies = json.load(cookies_file)
-
-# for cookie in cookies:
-#     driver.add_cookie(cookie)
-
-# driver.get('https://www.reuters.com/')
-
-
-# # elements = driver.find_elements("xpath", '//a[@data-testid="heading"]')
-# elements = driver.find_elements(By.TAG_NAME, 'a')
-
-# print(len(elements))
-
-# for element in elements:
-#     href = element.get_attribute('href')
-#     title = element.get_attribute('title')
-#     if href and title and re.match(r'https://www\.reuters\.com/.+/.+/.+[a-zA-Z]', href):
-#         print("Title: ", title)
-#         print("Href: ", href)
-
-# driver.quit()
-
 from selenium import webdriver
 from selenium.webdriver.chrome.service import Service
 from webdriver_manager.chrome import ChromeDriverManager
+from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.common.by import By
 import json
 import re
+import time
+import random
 
 
 def crawlreuters(subtags=None):
-    # Initialize the WebDriver
+    options = Options()
+    options.add_argument(
+        "user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/88.0.4324.150 Safari/537.36")
+
     service = Service(ChromeDriverManager().install())
-    driver = webdriver.Chrome(service=service)
+    driver = webdriver.Chrome(service=service, options=options)
 
     try:
         driver.get('https://www.reuters.com/')
+        time.sleep(random.uniform(2, 5))
 
-        # Load cookies from file
-        with open('./cookies/reuters.json', 'rt') as cookies_file:
+        with open('./crawlers/cookies/reuters.json', 'rt') as cookies_file:
             cookies = json.load(cookies_file)
         for cookie in cookies:
+            if "sameSite" in cookie and cookie["sameSite"] not in ["Strict", "Lax", "None"]:
+                cookie["sameSite"] = "Lax"
             driver.add_cookie(cookie)
+            time.sleep(random.uniform(0.5, 1))  # Adjust as necessary
 
-        # Refresh the page after adding cookies
         driver.get('https://www.reuters.com/')
+        time.sleep(random.uniform(2, 5))
 
-        # Find all <a> tags on the page
-        elements = driver.find_elements(By.TAG_NAME, 'a')
-        articles = []  # List to hold the scraped data
+        # Locate article <header> tags containing <a> tags
+        article_headers = driver.find_elements(By.CSS_SELECTOR, 'header a')
+        articles = []
 
-        # Extract title and href attributes from each <a> element
-        for element in elements:
-            href = element.get_attribute('href')
-            title = element.get_attribute('title')
-            if href and title and re.match(r'https://www\.reuters\.com/.+/.+/.+[a-zA-Z]', href):
+        for header in article_headers:
+            # Attempt to find the first <span> within the <a> which might contain the title
+            try:
+                title_element = header.find_element(By.CSS_SELECTOR, 'span')
+                title = title_element.text  # Assuming the title is the text of the first <span>
+            except:
+                title = ""  # If no <span> is found, or it doesn't contain the title
+
+            href = header.get_attribute('href')
+            if href and title:
                 articles.append(
                     {"title": title, "url": href, "source": "Reuters"})
+            # Be cautious with sleep in loops
+            time.sleep(random.uniform(0.1, 0.3))
 
         return articles
     finally:
-        driver.quit()  # Ensure the driver is closed properly
-
-# Usage example (uncomment to run):
-# scraped_articles = scrape_reuters()
-# for article in scraped_articles:
-#     print(f"Title: {article['title']}, URL: {article['url']}")
+        driver.quit()
