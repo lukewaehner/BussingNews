@@ -18,7 +18,12 @@ const newsSchema = new Schema(
       type: Number,
       // need to figure out how to parse dates, should be simple but building out everything first
     },
+
     source: {
+      type: String,
+    },
+
+    category: {
       type: String,
     },
     //

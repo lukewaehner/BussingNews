@@ -1,56 +1,31 @@
-from selenium import webdriver
-from selenium.webdriver.chrome.service import Service
-from webdriver_manager.chrome import ChromeDriverManager
-from selenium.webdriver.chrome.options import Options
-from selenium.webdriver.common.by import By
-import json
-import re
-import time
-import random
+import requests
+
+tags = ['world', 'business', 'markets', 'sustainability',
+        'legal',  'technology', 'breakingviews']
 
 
-def crawlreuters(subtags=None):
-    options = Options()
-    options.add_argument(
-        "user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/88.0.4324.150 Safari/537.36")
+def crawlreuters(tags, subtags=None):
+    return_data = []
+    size = 100  # Set the size for fetching articles
 
-    service = Service(ChromeDriverManager().install())
-    driver = webdriver.Chrome(service=service, options=options)
+    for tag in tags:
+        if tag == 'world':
+            REUTERS_URI = f'https://www.reuters.com/pf/api/v3/content/fetch/recent-stories-by-sections-v1?query=%7B%22section_ids%22%3A%22%2F{tag}%2F%22%2C%22size%22%3A{size}%2C%22website%22%3A%22reuters%22%7D&d=183&_website=reuters'
 
-    try:
-        driver.get('https://www.reuters.com/')
-        time.sleep(random.uniform(2, 5))
+            response = requests.get(REUTERS_URI)
 
-        with open('./crawlers/cookies/reuters.json', 'rt') as cookies_file:
-            cookies = json.load(cookies_file)
-        for cookie in cookies:
-            if "sameSite" in cookie and cookie["sameSite"] not in ["Strict", "Lax", "None"]:
-                cookie["sameSite"] = "Lax"
-            driver.add_cookie(cookie)
-            time.sleep(random.uniform(0.5, 1))  # Adjust as necessary
+            if response.status_code != 200:
+                print(f"Failed to retrieve the page for {tag}")
+            else:
+                data = response.json()
+                if not data['result']['articles']:
+                    print(f"No articles found for {tag}")
+                    continue
 
-        driver.get('https://www.reuters.com/')
-        time.sleep(random.uniform(2, 5))
-
-        # Locate article <header> tags containing <a> tags
-        article_headers = driver.find_elements(By.CSS_SELECTOR, 'header a')
-        articles = []
-
-        for header in article_headers:
-            # Attempt to find the first <span> within the <a> which might contain the title
-            try:
-                title_element = header.find_element(By.CSS_SELECTOR, 'span')
-                title = title_element.text  # Assuming the title is the text of the first <span>
-            except:
-                title = ""  # If no <span> is found, or it doesn't contain the title
-
-            href = header.get_attribute('href')
-            if href and title:
-                articles.append(
-                    {"title": title, "url": href, "source": "Reuters"})
-            # Be cautious with sleep in loops
-            time.sleep(random.uniform(0.1, 0.3))
-
-        return articles
-    finally:
-        driver.quit()
+                for item in data['result']['articles']:
+                    headline = item['title']
+                    url = item['canonical_url']
+                    time = item['published_time']
+                    return_data.append(
+                        {"title": headline, "url": url, "time": time, "source": "Reuters"})
+    return return_data
