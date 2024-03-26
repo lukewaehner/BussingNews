@@ -1,38 +1,44 @@
 from bs4 import BeautifulSoup
 import requests
+from .crawlersettings.returnsettings import returnsettings
 
 
 def crawlwsj(subtags):
     articles_list = []  # List to hold the scraped data
 
+    headers = returnsettings()
+
     for tag in subtags:
-        url = f"https://www.wsj.com/{tag}?mod=nav_top_section"
-        response = requests.get(url, headers={
-            "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/103.0.0.0 Safari/537.36"})
+        try:
+            url = f"https://www.wsj.com/{tag}?mod=nav_top_section"
+            response = requests.get(url, headers=headers)
 
-        if response.status_code != 200:
-            print(f"Failed to retrieve the page for {tag}")
-            continue
+            if response.status_code == 200:
+                soup = BeautifulSoup(response.text, 'html.parser')
+            else:
+                print(f"Failed to retrieve the page for {tag}")
+                continue
 
-        soup = BeautifulSoup(response.text, 'html.parser')
+            def links_search(tag):
+                conditions = ['HeadlineLink', 'HeadlineTextBlock']
+                if tag.has_attr('class'):
+                    class_str = " ".join(tag['class'])
+                    for condition in conditions:
+                        if condition in class_str:
+                            return True
+                return False
 
-        def links_search(tag):
-            conditions = ['HeadlineLink', 'HeadlineTextBlock']
-            if tag.has_attr('class'):
-                class_str = " ".join(tag['class'])
-                for condition in conditions:
-                    if condition in class_str:
-                        return True
-            return False
-
-        links = soup.find_all(links_search)
-        for element in links:
-            href = element.get('href', '')
-            title = element.text.strip()
-            if href:
-                articles_list.append(
-                    {"title": title, "url": href, "source": "WSJ"})
-
+            links = soup.find_all(links_search)
+            for element in links:
+                href = element.get('href', '')
+                title = element.text.strip()
+                if href:
+                    articles_list.append(
+                        {"title": title, "url": href, "source": "WSJ"})
+            else:
+                print(f"Failed to retrieve the page for {tag}")
+        except requests.exceptions.RequestException as e:
+            print(f'request failed for {tag} with error {e}')
     return articles_list
 
 

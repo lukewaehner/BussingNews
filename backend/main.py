@@ -8,25 +8,25 @@ from database import insertarticles
 crawlerlist = [
     {
         "function": crawlcnbc,
-        "subtags": ['markets', 'economy', 'finance', 'energy', 'investing', 'tech', 'world/?region=world']
+        "tags": ['markets', 'economy', 'finance', 'energy', 'investing', 'tech', 'world/?region=world']
     },
     {
         "function": crawlfoxbusiness,
-        "subtags": ['technology', 'real-estate', 'lifestyle', 'economy', 'watchlist', 'markets']
+        "tags": ['technology', 'real-estate', 'lifestyle', 'economy', 'watchlist', 'markets']
     },
     {
         "function": crawlbloomberg,
-        "subtags": ['markets', 'economics', 'industries', 'technology', 'ai', 'politics', 'wealth', 'crypto']
+        "tags": None
     },
     {
         "function": crawlreuters,
-        "subtags": ['world', 'business', 'markets', 'sustainability',
-                    'legal',  'technology', 'breakingviews']
+        "tags": ['world', 'business', 'markets', 'sustainability',
+                 'legal',  'technology', 'breakingviews']
     },
 
     {
         "function": crawlwsj,
-        "subtags": ['world', 'us-news', 'politics', 'economy', 'business', 'tech', 'real-estate', 'finance'],
+        "tags": ['world', 'us-news', 'politics', 'economy', 'business', 'tech', 'real-estate', 'finance'],
     }
 ]
 
@@ -35,8 +35,8 @@ def job():
     print("Running the scrapers")
     for crawler in crawlerlist:
         crawler_function = crawler["function"]
-        subtags = crawler["subtags"]
-        articles = crawler_function(subtags)
+        tags = crawler["tags"]
+        articles = crawler_function(tags)
 
         # now process
 
@@ -51,17 +51,15 @@ def test():
     print("Testing the scrapers")
     for crawler in crawlerlist:
         crawler_function = crawler["function"]
-        subtags = crawler["subtags"]
-        if ("alttags" in crawler):
-            alttags = crawler["alttags"]
-            articles = crawler_function(subtags, alttags)
-        else:
-            articles = crawler_function(subtags)
+        tags = crawler["tags"]
+        articles = crawler_function(tags)
 
         # now process
 
         if articles:
             print(articles[0])  # For testing, print the first article
+            print(
+                f'Fetched {len(articles)} articles for this scraper, {crawler}.')
         else:
             print(f'No articles fetched for this scraper, {crawler}.')
 
@@ -72,6 +70,7 @@ if response == 't':
     test()
 elif response == 'r':
     job()
+
 # schedule.every(10).minutes.do(job)
 
 # while True:

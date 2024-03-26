@@ -3,31 +3,41 @@
 
 from bs4 import BeautifulSoup
 import requests
+from .crawlersettings.returnsettings import returnsettings
 
 
 def crawlfoxbusiness(subtags):
-    articles_list = []
+    # URL to request
+    return_data = []
+
+    # Headers
+    headers = returnsettings()
+
+    # Load cookies from JSON file if needed
+
     for tag in subtags:
-        url = f"https://www.foxbusiness.com/{tag}"
-        response = requests.get(url, headers={
-            "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/103.0.0.0 Safari/537.36"})
+        url = f'https://www.foxbusiness.com/{tag}'
+        # Send GET request with cookies and headers
+        try:
+            response = requests.get(url,  headers=headers)
 
-        if response.status_code != 200:
-            print(f"Failed to retrieve the page for {tag}")
-            continue
+            if response.status_code == 200:
+                soup = BeautifulSoup(response.text, 'html.parser')
+                articles = soup.find_all('article', class_='article')
+                for article in articles:
+                    title_element = article.find('h3', class_='title')
+                    link_element = title_element.find(
+                        'a') if title_element else None
+                    if link_element and link_element.has_attr('href'):
+                        title = ' '.join(title_element.get_text().split())
+                        href = link_element['href']
+                        if not href.startswith('http'):
+                            href = f"https://www.foxbusiness.com{href}"
+                        return_data.append(
+                            {"title": title, "url": href, "source": "Fox Business"})
+            else:
+                print(f"Failed to retrieve the page: {tag}")
+        except requests.exceptions.RequestException as e:
+            print(f'request failed for {url} with error {e}')
 
-        soup = BeautifulSoup(response.text, 'html.parser')
-        articles = soup.find_all('article', class_='article')
-
-        for article in articles:
-            title_element = article.find('h3', class_='title')
-            link_element = title_element.find('a') if title_element else None
-            if link_element and link_element.has_attr('href'):
-                title = ' '.join(title_element.get_text().split())
-                href = link_element['href']
-                if not href.startswith('http'):
-                    href = f"https://www.foxbusiness.com{href}"
-                articles_list.append(
-                    {"title": title, "url": href, "source": "Fox Business"})
-
-    return articles_list
+    return return_data

@@ -11,3 +11,5 @@ crawlers -> obviously the crawlers, but needs to be refactored
 
 CNBC, FOX, and WSJ need Time functions implemented
 (I wrote out the format for getting time from fox already just needs implementation. CNBC / WSJ not looked at, would be similar idea though, you may have to go back up a level in HTML to fix it)
+
+Constant change of user agents and IP addresses
