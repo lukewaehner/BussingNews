@@ -13,3 +13,12 @@ CNBC, FOX, and WSJ need Time functions implemented
 (I wrote out the format for getting time from fox already just needs implementation. CNBC / WSJ not looked at, would be similar idea though, you may have to go back up a level in HTML to fix it)
 
 Constant change of user agents and IP addresses
+
+CNBC is broken it adds in these random articles:
+Pre-markets
+Cryptocurrnecies
+Dow30
+Dow 30: AFter-hours quotes
+Sector Watch
+
+Datetime is kind of wonky still

@@ -15,7 +15,8 @@ const newsSchema = new Schema(
     },
 
     date: {
-      type: Number,
+      type: Date,
+      default: Date.now,
       // need to figure out how to parse dates, should be simple but building out everything first
     },
 

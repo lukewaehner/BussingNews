@@ -1,12 +1,10 @@
 const NewsDetail = ({ newsArticle }) => {
   return (
     <div className="news-detail">
-      <h2>{newsArticle.title}</h2>
-      <p>
-        {" "}
-        <italic>{newsArticle.url}</italic>
-      </p>
-      <p>{newsArticle.createdAt}</p>
+      <h2 className="news-title">
+        <a href={newsArticle.url}>{newsArticle.title}</a>
+      </h2>
+      <p className="news-time">{newsArticle.date}</p>
     </div>
   );
 };

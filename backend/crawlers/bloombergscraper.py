@@ -2,7 +2,8 @@ from .crawlersettings.returnsettings import returnsettings
 import os
 import json
 import requests
-
+import re
+from datetime import datetime
 
 # Assuming `returnsettings` is modified to easily rotate settings on retries
 # and 'settings.py' is located appropriately within your project structure.
@@ -17,12 +18,10 @@ def crawlbloomberg(tags=None):
 
     # Proxies
     urls = ['https://www.bloomberg.com/lineup-next/api/page/markets-vp/module/pagination_story_list,pagination_rail_ad?moduleVariations=pagination,default&moduleTypes=story_list,ad&locale=en&publishedState=PUBLISHED',
-            'https://www.bloomberg.com/lineup-next/api/page/markets-vp/module/pagination_story_list,pagination_rail_ad?moduleVariations=pagination,default&moduleTypes=story_list,ad&locale=en&publishedState=PUBLISHED',
-            'https://www.bloomberg.com/lineup-next/api/page/markets-vp/module/pagination_story_list,pagination_rail_ad?moduleVariations=pagination,default&moduleTypes=story_list,ad&locale=en&publishedState=PUBLISHED',
             'https://www.bloomberg.com/lineup-next/api/page/economics-v2/module/quicktake,new_economy_video?moduleVariations=4_up_images,default&moduleTypes=story_package,video&locale=en&publishedState=PUBLISHED',
-            'https://www.bloomberg.com/lineup-next/api/page/industries-v2/module/video?moduleVariations=default&moduleTypes=video&locale=en&publishedState=PUBLISHED',
             'https://www.bloomberg.com/lineup-next/api/page/technology-vp/module/pagination_story_list,pagination_rail_ad?moduleVariations=pagination,default&moduleTypes=story_list,ad&locale=en&publishedState=PUBLISHED',
-            'https://www.bloomberg.com/lineup-next/api/page/technology-vp/module/hub_story_list,pagination_mobile_ad,hub_ad_3?moduleVariations=default,default,default&moduleTypes=story_list,ad,ad&locale=en&publishedState=PUBLISHED']
+            'https://www.bloomberg.com/lineup-next/api/page/technology-vp/module/hub_story_list,pagination_mobile_ad,hub_ad_3?moduleVariations=default,default,default&moduleTypes=story_list,ad,ad&locale=en&publishedState=PUBLISHED'
+            ]
 
     # Load cookies from JSON file
     script_dir = os.path.dirname(os.path.abspath(__file__))
@@ -34,24 +33,30 @@ def crawlbloomberg(tags=None):
     cookies = {cookie['name']: cookie['value']
                for cookie in cookie_list if 'name' in cookie and 'value' in cookie}
 
+    altheader = {
+        'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36'}
     for url in urls:
+        pattern = r"/api/page/[^/]+/module/([^,?]+)"
         # Send GET request with cookies and headers
         try:
             response = requests.get(
-                url, cookies=cookies, headers=headers)
+                url, headers=altheader)
 
             if response.status_code == 200:
                 data = response.json()
-                print(data)
-                for item in data['modules']['pagination_story_list']['items']:
+                match = re.search(pattern, url)
+                array_articles = str(match.group(1))
+                for item in data['modules'][array_articles]['items']:
                     url = item['url']
+                    time = item['publishedAt']
+                    datetime_obj = datetime.strptime(
+                        time, "%Y-%m-%dT%H:%M:%S.%fZ")
                     return_data.append(
-                        {"title": item['headline'], "url": f"https://www.bloomberg.com{url}", "time": item['publishedAt'], "source": "Bloomberg"
+                        {"title": item['headline'], "url": f"https://www.bloomberg.com{url}", "date": datetime_obj, "source": "Bloomberg"
                          })
             else:
                 print(
                     f"Failed to retrieve the page for {url} with status code {response.status_code}")
         except requests.exceptions.RequestException as e:
             print(f'request failed for {url} with error {e}')
-
     return return_data

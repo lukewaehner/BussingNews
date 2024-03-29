@@ -1,13 +1,13 @@
 import requests
 from .crawlersettings.returnsettings import returnsettings
-
+from datetime import datetime
 tags = ['world', 'business', 'markets', 'sustainability',
         'legal',  'technology', 'breakingviews']
 
 
 def crawlreuters(tags, subtags=None):
     return_data = []
-    size = 100  # Set the size for fetching articles
+    size = 10  # Set the size for fetching articles
     headers = returnsettings()
     for tag in tags:
         try:
@@ -25,8 +25,9 @@ def crawlreuters(tags, subtags=None):
                     headline = item['title']
                     url = item['canonical_url']
                     time = item['published_time']
+                    date = datetime.strptime(time, "%Y-%m-%dT%H:%M:%S.%fZ")
                     return_data.append(
-                        {"title": headline, "url": url, "time": time, "source": "Reuters"})
+                        {"title": headline, "url": url, "date": date, "source": "Reuters"})
 
             else:
                 print(f"Failed to retrieve the page for {tag}")

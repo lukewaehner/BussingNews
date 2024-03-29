@@ -9,21 +9,21 @@
     "secure": false,
     "session": true,
     "storeId": "0",
-    "value": "6a662160-f60c-4b33-b8e8-78740c7808e6",
+    "value": "14833e32-701e-4650-803e-c602152c04eb",
     "id": 1
   },
   {
     "domain": ".bloomberg.com",
-    "expirationDate": 1711163338.512198,
+    "expirationDate": 1742938207,
     "hostOnly": false,
     "httpOnly": false,
-    "name": "_last-refresh",
+    "name": "_pxvid",
     "path": "/",
-    "sameSite": "unspecified",
+    "sameSite": "lax",
     "secure": false,
     "session": false,
     "storeId": "0",
-    "value": "2024-3-23%202%3A8",
+    "value": "da14a60d-eaee-11ee-939e-ad179576f0fb",
     "id": 2
   },
   {
@@ -36,7 +36,7 @@
     "secure": true,
     "session": true,
     "storeId": "0",
-    "value": "s%3ABgxfZRZot7-IlIcE5MiBYdSt.WzwxYmCDaTpFo8i86M8LNawyITVDR%2FrojwPLz9ElBNU",
+    "value": "s%3A3ecO5WgvPfYDAwPVZQqf27G6.OuXGGYx97fqdr54dCNuIBx5dXxXisfFJLiW%2F15tV1Zk",
     "id": 3
   },
   {
@@ -49,12 +49,12 @@
     "secure": true,
     "session": true,
     "storeId": "0",
-    "value": "qPARR1lg-Z8FPcqYaVp3ki_9ObhB-fs0HKec",
+    "value": "yDtchcze-I4v-DH8Lp6T7xB3do-oR9LcTPvI",
     "id": 4
   },
   {
     "domain": ".bloomberg.com",
-    "expirationDate": 1742695738.323778,
+    "expirationDate": 1743028066.564365,
     "hostOnly": false,
     "httpOnly": true,
     "name": "_session_id_backup",
@@ -68,7 +68,7 @@
   },
   {
     "domain": ".bloomberg.com",
-    "expirationDate": 1711163338.512173,
+    "expirationDate": 1711495666.780404,
     "hostOnly": false,
     "httpOnly": false,
     "name": "_user-data",
@@ -82,7 +82,7 @@
   },
   {
     "domain": ".bloomberg.com",
-    "expirationDate": 1742695738.323738,
+    "expirationDate": 1743028066.564323,
     "hostOnly": false,
     "httpOnly": false,
     "name": "agent_id",
@@ -96,7 +96,7 @@
   },
   {
     "domain": ".bloomberg.com",
-    "expirationDate": 1742695738,
+    "expirationDate": 1743028066,
     "hostOnly": false,
     "httpOnly": false,
     "name": "bbgconsentstring",
@@ -179,7 +179,7 @@
   },
   {
     "domain": ".bloomberg.com",
-    "expirationDate": 1742695738.32381,
+    "expirationDate": 1743028066.564403,
     "hostOnly": false,
     "httpOnly": false,
     "name": "gatehouse_id",
@@ -209,6 +209,19 @@
     "domain": ".bloomberg.com",
     "hostOnly": false,
     "httpOnly": false,
+    "name": "pxcts",
+    "path": "/",
+    "sameSite": "lax",
+    "secure": false,
+    "session": true,
+    "storeId": "0",
+    "value": "da14b3b3-eaee-11ee-939e-45e1e2ba1a78",
+    "id": 16
+  },
+  {
+    "domain": ".bloomberg.com",
+    "hostOnly": false,
+    "httpOnly": false,
     "name": "seen_uk",
     "path": "/",
     "sameSite": "unspecified",
@@ -216,11 +229,11 @@
     "session": true,
     "storeId": "0",
     "value": "1",
-    "id": 16
+    "id": 17
   },
   {
     "domain": ".bloomberg.com",
-    "expirationDate": 1742695738.323762,
+    "expirationDate": 1743028066.564347,
     "hostOnly": false,
     "httpOnly": false,
     "name": "session_id",
@@ -230,11 +243,11 @@
     "session": false,
     "storeId": "0",
     "value": "cc9629d6-3c9e-4b11-8128-27c09d58a494",
-    "id": 17
+    "id": 18
   },
   {
     "domain": ".bloomberg.com",
-    "expirationDate": 1742695738.323794,
+    "expirationDate": 1743028066.564384,
     "hostOnly": false,
     "httpOnly": false,
     "name": "session_key",
@@ -244,7 +257,7 @@
     "session": false,
     "storeId": "0",
     "value": "22f3fa1fb86d8d8569897a996ad855532cb4ef49",
-    "id": 18
+    "id": 19
   },
   {
     "domain": ".bloomberg.com",
@@ -258,11 +271,11 @@
     "session": false,
     "storeId": "0",
     "value": "undefined",
-    "id": 19
+    "id": 20
   },
   {
     "domain": ".www.bloomberg.com",
-    "expirationDate": 1732848610,
+    "expirationDate": 1742873118,
     "hostOnly": false,
     "httpOnly": false,
     "name": "__stripe_mid",
@@ -272,7 +285,7 @@
     "session": false,
     "storeId": "0",
     "value": "fb4cb8eb-33e9-45c3-9970-ecc0f982ba5222b69e",
-    "id": 20
+    "id": 21
   },
   {
     "domain": ".www.bloomberg.com",
@@ -285,7 +298,7 @@
     "session": true,
     "storeId": "0",
     "value": "US",
-    "id": 21
+    "id": 22
   },
   {
     "domain": ".www.bloomberg.com",
@@ -299,19 +312,6 @@
     "session": false,
     "storeId": "0",
     "value": "{%22country%22:%22US%22%2C%22region%22:%22US%22%2C%22cityId%22:%224835512%22%2C%22provinceId%22:%224831725%22%2C%22fieldP%22:%2245A33%22%2C%22fieldD%22:%22comcast.net%22%2C%22fieldMI%22:10%2C%22fieldN%22:%22hf%22}|1711689440388",
-    "id": 22
-  },
-  {
-    "domain": "www.bloomberg.com",
-    "hostOnly": true,
-    "httpOnly": false,
-    "name": "",
-    "path": "/",
-    "sameSite": "unspecified",
-    "secure": false,
-    "session": true,
-    "storeId": "0",
-    "value": "table: 0x7fe3afa20ba0",
     "id": 23
   }
 ]
