@@ -42,6 +42,8 @@ def job():
 
         if articles:
             # Insert articles into the database
+            print(
+                f'Fetched {len(articles)} articles for this scraper, {crawler}.')
             insertarticles(articles)
         else:
             print(f'No articles fetched for this scraper, {crawler}.')
