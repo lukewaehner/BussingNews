@@ -1,0 +1,19 @@
+{
+  "name": "bussingnews",
+  "version": "1.0.0",
+  "description": "## Introduction",
+  "main": "index.js",
+  "scripts": {
+    "start-backend": "cd backend && nodemon server.js",
+    "start-frontend": "wait-on tcp:4000 && cd frontend && npm start",
+    "start-python": "cd backend && python3 main.py",
+    "start-all": "concurrently --kill-others --success first \"npm run start-backend\" \"npm run start-frontend\" \"npm run start-python\""
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "concurrently": "^8.2.2",
+    "wait-on": "^7.2.0"
+  }
+}

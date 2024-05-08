@@ -9,14 +9,21 @@ from datetime import datetime
 # and 'settings.py' is located appropriately within your project structure.
 
 
+def processData(item):
+    url = item['url']
+    time = item['publishedAt']
+    datetime_obj = datetime.strptime(
+        time, "%Y-%m-%dT%H:%M:%S.%fZ")
+    return {"title": item['headline'], "url": f"https://www.bloomberg.com{url}", "date": datetime_obj, "source": "Bloomberg"}
+
+
 def crawlbloomberg(tags=None):
-    # URL to request
     return_data = []
 
     # Headers
     headers = returnsettings()
 
-    # Proxies
+    # URLs to reuqest from
     urls = ['https://www.bloomberg.com/lineup-next/api/page/markets-vp/module/pagination_story_list,pagination_rail_ad?moduleVariations=pagination,default&moduleTypes=story_list,ad&locale=en&publishedState=PUBLISHED',
             'https://www.bloomberg.com/lineup-next/api/page/economics-v2/module/quicktake,new_economy_video?moduleVariations=4_up_images,default&moduleTypes=story_package,video&locale=en&publishedState=PUBLISHED',
             'https://www.bloomberg.com/lineup-next/api/page/technology-vp/module/pagination_story_list,pagination_rail_ad?moduleVariations=pagination,default&moduleTypes=story_list,ad&locale=en&publishedState=PUBLISHED',
@@ -44,16 +51,33 @@ def crawlbloomberg(tags=None):
 
             if response.status_code == 200:
                 data = response.json()
-                match = re.search(pattern, url)
-                array_articles = str(match.group(1))
-                for item in data['modules'][array_articles]['items']:
-                    url = item['url']
-                    time = item['publishedAt']
-                    datetime_obj = datetime.strptime(
-                        time, "%Y-%m-%dT%H:%M:%S.%fZ")
-                    return_data.append(
-                        {"title": item['headline'], "url": f"https://www.bloomberg.com{url}", "date": datetime_obj, "source": "Bloomberg"
-                         })
+                # normal method
+                try:
+                    # grab the iterable key
+                    first_key = list(data.keys())[0]
+                    for item in data[first_key]['items']:
+                        # process the data with predefined schema, this doesn't seem to change
+                        return_data.append(processData(item))
+
+                # except any error
+                except Exception as e:
+                    print(f'error for {url} with error {e}')
+                    # nest this try statement I cant remember where this even comes from haha
+                    try:
+                        match = re.search(pattern, url)
+                        array_articles = str(match.group(1))
+                        for item in data['modules'][array_articles]['items']:
+                            url = item['url']
+                            time = item['publishedAt']
+                            datetime_obj = datetime.strptime(
+                                time, "%Y-%m-%dT%H:%M:%S.%fZ")
+                            return_data.append(
+                                {"title": item['headline'], "url": f"https://www.bloomberg.com{url}", "date": datetime_obj, "source": "Bloomberg"
+                                 })
+                    # except keyerror
+                    except KeyError as e:
+                        print(f'keyerror for {url} with error {e}')
+
             else:
                 print(
                     f"Failed to retrieve the page for {url} with status code {response.status_code}")

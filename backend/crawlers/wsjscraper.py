@@ -1,6 +1,8 @@
 from bs4 import BeautifulSoup
 import requests
 from .crawlersettings.returnsettings import returnsettings
+import os
+import json
 
 
 def crawlwsj(subtags):
@@ -8,15 +10,25 @@ def crawlwsj(subtags):
 
     headers = returnsettings()
 
+    # cookies processing
+    script_dir = os.path.dirname(os.path.abspath(__file__))
+    cookies_json = os.path.join(script_dir, 'cookies/wsj.json')
+    with open(cookies_json, 'rt') as cookies_file:
+        cookie_list = json.load(cookies_file)
+
+    cookies = {cookie['name']: cookie['value']
+               for cookie in cookie_list if 'name' in cookie and 'value' in cookie}
+
     for tag in subtags:
         try:
             url = f"https://www.wsj.com/{tag}?mod=nav_top_section"
-            response = requests.get(url, headers=headers)
+            response = requests.get(url, headers=headers, cookies=cookies)
 
             if response.status_code == 200:
                 soup = BeautifulSoup(response.text, 'html.parser')
             else:
-                print(f"Failed to retrieve the page for {tag}")
+                print(
+                    f"Failed to retrieve the page for {tag} with status code {response.status_code}")
                 continue
 
             def links_search(tag):
@@ -35,8 +47,6 @@ def crawlwsj(subtags):
                 if href:
                     articles_list.append(
                         {"title": title, "url": href, "source": "WSJ"})
-            else:
-                print(f"Failed to retrieve the page for {tag}")
         except requests.exceptions.RequestException as e:
             print(f'request failed for {tag} with error {e}')
     return articles_list
@@ -44,6 +54,6 @@ def crawlwsj(subtags):
 
 # Example usage:
 # subtags = ['world', 'us', 'politics', 'economy', 'business', 'markets']
-# articles = crawlwsj(subtags, None)
+# articles = crawlwsj(subtags)
 # for article in articles:
 #     print(f"Title: {article['title']}, URL: {article['url']}")

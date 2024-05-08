@@ -31,8 +31,8 @@ crawlerlist = [
 ]
 
 
-def job():
-    print("Running the scrapers")
+def test():
+    print("Testing the scrapers")
     for crawler in crawlerlist:
         crawler_function = crawler["function"]
         tags = crawler["tags"]
@@ -41,15 +41,14 @@ def job():
         # now process
 
         if articles:
-            # Insert articles into the database
+            print(articles[0])  # For testing, print the first article
             print(
                 f'Fetched {len(articles)} articles for this scraper, {crawler}.')
-            insertarticles(articles)
         else:
             print(f'No articles fetched for this scraper, {crawler}.')
 
 
-job()
+test()
 
 # schedule.every(10).minutes.do(job)
 
